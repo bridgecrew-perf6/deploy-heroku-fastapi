@@ -63,8 +63,6 @@ def process_data(
         binarizer
         passed in.
     """
-    print(X.info())
-
     if label is not None:
         y = X[label]
         X = X.drop([label], axis=1)
@@ -110,7 +108,7 @@ def train_model(X_train, y_train):
     scores = cross_val_score(model, X_train, y_train, scoring='accuracy',
                              cv=cv, n_jobs=-1)
 
-    logging.info('Accuracy: %.3f (%.3f)' % (mean(scores), std(scores)))
+    print('Accuracy: %.3f (%.3f)' % (mean(scores), std(scores)))
     return model
 
 
