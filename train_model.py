@@ -1,7 +1,17 @@
+import json
+import os
+import pickle
 import numpy as np
 import pandas as pd
+import logging
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 from sklearn.metrics import fbeta_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
+from numpy import mean, std
 
 def get_data():
     # Add code to load in the data.
@@ -53,6 +63,7 @@ def process_data(
         binarizer
         passed in.
     """
+    print(X.info())
 
     if label is not None:
         y = X[label]
@@ -79,11 +90,9 @@ def process_data(
     X = np.concatenate([X_continuous, X_categorical], axis=1)
     return X, y, encoder, lb
 
-# Optional: implement hyperparameter tuning.
 def train_model(X_train, y_train):
     """
     Trains a machine learning model and returns it.
-
     Inputs
     ------
     X_train : np.array
@@ -95,8 +104,47 @@ def train_model(X_train, y_train):
     model
         Trained machine learning model.
     """
+    cv = KFold(n_splits=2, shuffle=True, random_state=1)
+    model = GradientBoostingClassifier(n_estimators=10)
+    model.fit(X_train, y_train)
+    scores = cross_val_score(model, X_train, y_train, scoring='accuracy',
+                             cv=cv, n_jobs=-1)
 
-    pass
+    logging.info('Accuracy: %.3f (%.3f)' % (mean(scores), std(scores)))
+    return model
+
+
+def get_model(data: pd.DataFrame):
+    """
+    Execute model training
+    """
+    train, test = train_test_split(data, test_size=0.20)
+
+    cat_features = [
+        "workclass",
+        "education",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native-country",
+    ]
+    X_train, y_train, encoder, lb = process_data(
+        train, categorical_features=cat_features, label="salary", training=True
+    )
+    trained_model = train_model(X_train, y_train)
+
+    with open(os.path.join("models", "model.pkl"), 'wb') as pickle_file:
+        pickle.dump(trained_model, pickle_file)
+
+    with open(os.path.join("models", "encode.pkl"), 'wb') as pickle_file:
+        pickle.dump(encoder, pickle_file)
+
+    with open(os.path.join("models", "lb.pkl"), 'wb') as pickle_file:
+        pickle.dump(lb, pickle_file)
+
+    return trained_model
 
 
 def compute_model_metrics(y, preds):
@@ -139,4 +187,8 @@ def inference(model, X):
 
 def  main():
     data = get_data()
+    model = get_model(data)
+
+if __name__ == '__main__':
+    main()
 
