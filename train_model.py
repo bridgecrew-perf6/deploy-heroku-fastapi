@@ -1,6 +1,13 @@
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 from sklearn.metrics import fbeta_score, precision_score, recall_score
+
+def get_data():
+    # Add code to load in the data.
+    data = pd.read_csv("./data/census_clean.csv")
+
+    return data
 
 def process_data(
     X, categorical_features=[], label=None, training=True, encoder=None,
@@ -129,3 +136,7 @@ def inference(model, X):
     """
     y_preds = model.predict(X)
     return y_preds
+
+def  main():
+    data = get_data()
+
