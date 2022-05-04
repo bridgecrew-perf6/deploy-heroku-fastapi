@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing_extensions import Literal
-from joblib import load
+import pickle
 import train_model
 from pandas.core.frame import DataFrame
 import numpy as np
@@ -18,6 +18,7 @@ class User(BaseModel):
         'Some-college',
         'Assoc-acdm', '7th-8th', 'Doctorate', 'Assoc-voc', 'Prof-school',
         '5th-6th', '10th', 'Preschool', '12th', '1st-4th']
+    educationNum: int
     maritalStatus: Literal[
         'Never-married', 'Married-civ-spouse', 'Divorced',
         'Married-spouse-absent', 'Separated', 'Married-AF-spouse',
@@ -46,6 +47,10 @@ class User(BaseModel):
         'Outlying-US(Guam-USVI-etc)', 'Scotland', 'Trinadad&Tobago',
         'Greece', 'Nicaragua', 'Vietnam', 'Hong', 'Ireland', 'Hungary',
         'Holand-Netherlands']
+    fnlgt: int
+    capitalGain: int
+    capitalLoss: int
+    other: int
 
 
 if "DYNO" in os.environ and os.path.isdir(".dvc"):
@@ -63,33 +68,43 @@ async def get_items():
 
 @app.post("/")
 async def inference(user_data: User):
-    model = load("models/model.pkl")
-    encoder = load("models/encoder.pkl")
-    lb = load("models/lb.pkl")
+    model = pickle.load(open('models/model.pkl', 'rb'))
+    encoder = pickle.load(open("models/encode.pkl", 'rb'))
+    lb = pickle.load(open("models/lb.pkl", 'rb'))
 
     array = np.array([[
                      user_data.age,
                      user_data.workclass,
+                     user_data.fnlgt,
                      user_data.education,
+                     user_data.educationNum,
                      user_data.maritalStatus,
                      user_data.occupation,
                      user_data.relationship,
                      user_data.race,
                      user_data.sex,
+                     user_data.capitalGain,
+                     user_data.capitalLoss,
                      user_data.hoursPerWeek,
-                     user_data.nativeCountry
+                     user_data.nativeCountry,
+                     user_data.other
                      ]])
     df_temp = DataFrame(data=array, columns=[
         "age",
         "workclass",
+        "fnlgt",
         "education",
+        "education-num",
         "marital-status",
         "occupation",
         "relationship",
         "race",
         "sex",
+        "capital-gain",
+        "capital-loss",
         "hours-per-week",
         "native-country",
+        "other"
     ])
 
     cat_features = [

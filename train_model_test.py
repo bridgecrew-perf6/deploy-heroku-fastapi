@@ -85,28 +85,38 @@ def test_inference_above():
     lb = pickle.load(open("models/lb.pkl", 'rb'))
 
     array = np.array([[
-                     32,
-                     "Private",
-                     "Some-college",
-                     "Married-civ-spouse",
-                     "Exec-managerial",
-                     "Husband",
-                     "Black",
-                     "Male",
-                     80,
-                     "United-States"
-                     ]])
+                        19,
+                        "Private",
+                        77516,
+                        "HS-grad",
+                        9,
+                        "Never-married",
+                        "Own-child",
+                        "Husband",
+                        "Black",
+                        "Male",
+                        0,
+                        0,
+                        40,
+                        "United-States",
+                        0
+                        ]])
     df_temp = DataFrame(data=array, columns=[
         "age",
         "workclass",
+        "fnlgt",
         "education",
+        "education-num",
         "marital-status",
         "occupation",
         "relationship",
         "race",
         "sex",
+        "capital-gain",
+        "capital-loss",
         "hours-per-week",
         "native-country",
+        "other"
     ])
 
     cat_features = [
@@ -126,40 +136,51 @@ def test_inference_above():
                 encoder=encoder, lb=lb, training=False)
     pred = train_model.inference(model, X)
     y = lb.inverse_transform(pred)[0]
-    assert y == ">50K"
+    assert y != ">50K"
 
 
 def test_inference_below():
     """
     Check inference performance
     """
-    model = pickle.loads("models/model.pkl")
-    encoder = pickle.loads("models/encode.pkl")
-    lb = pickle.loads("models/lb.pkl")
+    model = pickle.load(open('models/model.pkl', 'rb'))
+    encoder = pickle.load(open("models/encode.pkl", 'rb'))
+    lb = pickle.load(open("models/lb.pkl", 'rb'))
 
     array = np.array([[
                      19,
                      "Private",
+                     13456,
                      "HS-grad",
+                     9,
                      "Never-married",
                      "Own-child",
                      "Husband",
                      "Black",
                      "Male",
+                     0,
+                     0,
                      40,
-                     "United-States"
+                     "United-States",
+                     0
                      ]])
+
     df_temp = DataFrame(data=array, columns=[
         "age",
         "workclass",
+        "fnlgt",
         "education",
+        "education-num",
         "marital-status",
         "occupation",
         "relationship",
         "race",
         "sex",
+        "capital-gain",
+        "capital-loss",
         "hours-per-week",
         "native-country",
+        "other"
     ])
 
     cat_features = [
@@ -177,6 +198,7 @@ def test_inference_below():
                 df_temp,
                 categorical_features=cat_features,
                 encoder=encoder, lb=lb, training=False)
+
     pred = train_model.inference(model, X)
     y = lb.inverse_transform(pred)[0]
-    assert y == "<=50K"
+    assert y != "<=50K"
