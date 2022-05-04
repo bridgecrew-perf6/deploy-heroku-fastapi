@@ -37,8 +37,8 @@ def test_process_encoder(data):
     """
     Check split have same number of rows for X and y
     """
-    encoder_test = pickle.loads("models/encoder.joblib")
-    lb_test = pickle.load("models/lb.joblib")
+    encoder_test = pickle.loads("models/encoder.pkl")
+    lb_test = pickle.load("models/lb.pkl")
 
     cat_features = [
         "workclass",
@@ -69,9 +69,9 @@ def test_inference_above():
     """
     Check inference performance
     """
-    model = pickle.loads("models/model.joblib")
-    encoder = pickle.loads("models/encoder.joblib")
-    lb = pickle.loads("models/lb.joblib")
+    model = pickle.loads("models/model.pkl")
+    encoder = pickle.loads("models/encoder.pkl")
+    lb = pickle.loads("models/lb.pkl")
 
     array = np.array([[
                      32,
