@@ -133,14 +133,9 @@ def get_model(data: pd.DataFrame):
     )
     trained_model = train_model(X_train, y_train)
 
-    with open(os.path.join("models", "model.pkl"), 'wb') as pickle_file:
-        pickle.dump(trained_model, pickle_file)
-
-    with open(os.path.join("models", "encode.pkl"), 'wb') as pickle_file:
-        pickle.dump(encoder, pickle_file)
-
-    with open(os.path.join("models", "lb.pkl"), 'wb') as pickle_file:
-        pickle.dump(lb, pickle_file)
+    pickle.dump(trained_model, open('models/model.pkl', 'wb'))
+    pickle.dump(encoder, open('models/encode.pkl', 'wb'))
+    pickle.dump(lb, open('models/lb.pkl', 'wb'))
 
     return trained_model
 

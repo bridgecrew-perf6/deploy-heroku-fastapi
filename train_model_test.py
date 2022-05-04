@@ -22,12 +22,23 @@ def test_process_data(data):
     """
     Check split have same number of rows for X and y
     """
-    encoder = pickle.loads("models/encoder.pkl")
-    lb = pickle.loads("models/lb.pkl")
+    encoder = pickle.load(open("models/encode.pkl", 'rb'))
+    lb = pickle.load(open("models/lb.pkl", 'rb'))
+
+    cat_features = [
+        "workclass",
+        "education",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native-country",
+    ]
 
     X_test, y_test, _, _ = train_model.process_data(
         data,
-        categorical_features= train_model.get_cat_features(),
+        categorical_features= cat_features,
         label="salary", encoder=encoder, lb=lb, training=False)
 
     assert len(X_test) == len(y_test)
@@ -37,8 +48,8 @@ def test_process_encoder(data):
     """
     Check split have same number of rows for X and y
     """
-    encoder_test = pickle.loads("models/encoder.pkl")
-    lb_test = pickle.load("models/lb.pkl")
+    encoder_test = pickle.load(open("models/encode.pkl", 'rb'))
+    lb_test = pickle.load(open("models/lb.pkl", 'rb'))
 
     cat_features = [
         "workclass",
@@ -69,9 +80,9 @@ def test_inference_above():
     """
     Check inference performance
     """
-    model = pickle.loads("models/model.pkl")
-    encoder = pickle.loads("models/encoder.pkl")
-    lb = pickle.loads("models/lb.pkl")
+    model = pickle.load(open('models/model.pkl', 'rb'))
+    encoder = pickle.load(open("models/encode.pkl", 'rb'))
+    lb = pickle.load(open("models/lb.pkl", 'rb'))
 
     array = np.array([[
                      32,
@@ -123,7 +134,7 @@ def test_inference_below():
     Check inference performance
     """
     model = pickle.loads("models/model.pkl")
-    encoder = pickle.loads("models/encoder.pkl")
+    encoder = pickle.loads("models/encode.pkl")
     lb = pickle.loads("models/lb.pkl")
 
     array = np.array([[
