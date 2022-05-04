@@ -14,7 +14,7 @@ def data():
     """
     Get dataset
     """
-    df = pd.read_csv("data/prepared/census.csv")
+    df = pd.read_csv("data/census_clean.csv")
     return df
 
 
@@ -69,9 +69,9 @@ def test_inference_above():
     """
     Check inference performance
     """
-    model = pickle.loads("data/model/model.joblib")
-    encoder = pickle.loads("data/model/encoder.joblib")
-    lb = pickle.loads("data/model/lb.joblib")
+    model = pickle.loads("models/model.joblib")
+    encoder = pickle.loads("models/encoder.joblib")
+    lb = pickle.loads("models/lb.joblib")
 
     array = np.array([[
                      32,
