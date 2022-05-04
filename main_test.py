@@ -3,7 +3,7 @@ Api servermodule test
 """
 import pytest
 from fastapi.testclient import TestClient
-from fast_api import app
+from main import app
 
 
 @pytest.fixture

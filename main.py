@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Literal
+from typing_extensions import Literal
 from joblib import load
 import train_model
 from pandas.core.frame import DataFrame
@@ -56,7 +56,6 @@ if "DYNO" in os.environ and os.path.isdir(".dvc"):
 
 app = FastAPI()
 
-
 @app.get("/")
 async def get_items():
     return {"message": "Welcome message and test."}
@@ -64,9 +63,9 @@ async def get_items():
 
 @app.post("/")
 async def inference(user_data: User):
-    model = load("models/model.joblib")
-    encoder = load("models/encoder.joblib")
-    lb = load("models/lb.joblib")
+    model = load("models/model.pkl")
+    encoder = load("models/encoder.pkl")
+    lb = load("models/lb.pkl")
 
     array = np.array([[
                      user_data.age,
@@ -111,3 +110,5 @@ async def inference(user_data: User):
     pred = train_model.inference(model, X)
     y = lb.inverse_transform(pred)[0]
     return {"prediction": y}
+
+    
