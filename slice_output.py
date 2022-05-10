@@ -10,8 +10,6 @@ def check_score():
     Execute score checking
     """
     df = pd.read_csv("data/census_clean.csv")
-    _, test = train_test_split(df, test_size=0.20)
-
     trained_model = load("models/model.pkl")
     encoder = load("models/encode.pkl")
     lb = load("models/lb.pkl")
@@ -30,8 +28,8 @@ def check_score():
     slice_values = []
 
     for cat in cat_features:
-        for cls in test[cat].unique():
-            df_temp = test[test[cat] == cls]
+        for cls in df[cat].unique():
+            df_temp = df[df[cat] == cls]
 
             X_test, y_test, _, _ = train_model.process_data(
                 df_temp,

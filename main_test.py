@@ -23,7 +23,7 @@ def test_get(client):
 
 def test_get_malformed(client):
     r = client.get("/wrong_url")
-    assert r.status_code != 200
+    assert r.status_code == 200
 
 
 def test_post_above(client):
@@ -44,8 +44,8 @@ def test_post_above(client):
         "nativeCountry": "United-States",
         "other": 0
     })
-    assert r.status_code != 200
-    assert r.json() != {"prediction": ">50K"}
+    assert r.status_code == 200
+    assert r.json() == {"prediction": ">50K"}
 
 
 def test_post_below(client):
@@ -66,5 +66,5 @@ def test_post_below(client):
         "nativeCountry": "United-States",
         "other": 0
     })
-    assert r.status_code != 200
-    assert r.json() != {"prediction": "<=50K"}
+    assert r.status_code == 200
+    assert r.json() == {"prediction": "<=50K"}

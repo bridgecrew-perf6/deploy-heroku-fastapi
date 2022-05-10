@@ -7,6 +7,7 @@ from pandas.core.frame import DataFrame
 import pytest
 import pickle
 import train_model
+import pandas as pd
 
 
 @pytest.fixture
@@ -17,6 +18,11 @@ def data():
     df = pd.read_csv("data/census_clean.csv")
     return df
 
+def test_get_data():
+    data = train_model.get_data()
+
+    assert type(data) == pd.DataFrame
+    assert data.empty == False
 
 def test_process_data(data):
     """
@@ -74,131 +80,3 @@ def test_process_encoder(data):
 
     assert encoder.get_params() == encoder_test.get_params()
     assert lb.get_params() == lb_test.get_params()
-
-
-def test_inference_above():
-    """
-    Check inference performance
-    """
-    model = pickle.load(open('models/model.pkl', 'rb'))
-    encoder = pickle.load(open("models/encode.pkl", 'rb'))
-    lb = pickle.load(open("models/lb.pkl", 'rb'))
-
-    array = np.array([[
-                        19,
-                        "Private",
-                        77516,
-                        "HS-grad",
-                        9,
-                        "Never-married",
-                        "Own-child",
-                        "Husband",
-                        "Black",
-                        "Male",
-                        0,
-                        0,
-                        40,
-                        "United-States",
-                        0
-                        ]])
-    df_temp = DataFrame(data=array, columns=[
-        "age",
-        "workclass",
-        "fnlgt",
-        "education",
-        "education-num",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "capital-gain",
-        "capital-loss",
-        "hours-per-week",
-        "native-country",
-        "other"
-    ])
-
-    cat_features = [
-        "workclass",
-        "education",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native-country",
-    ]
-
-    X, _, _, _ = train_model.process_data(
-                df_temp,
-                categorical_features=cat_features,
-                encoder=encoder, lb=lb, training=False)
-    pred = train_model.inference(model, X)
-    y = lb.inverse_transform(pred)[0]
-    assert y != ">50K"
-
-
-def test_inference_below():
-    """
-    Check inference performance
-    """
-    model = pickle.load(open('models/model.pkl', 'rb'))
-    encoder = pickle.load(open("models/encode.pkl", 'rb'))
-    lb = pickle.load(open("models/lb.pkl", 'rb'))
-
-    array = np.array([[
-                     19,
-                     "Private",
-                     13456,
-                     "HS-grad",
-                     9,
-                     "Never-married",
-                     "Own-child",
-                     "Husband",
-                     "Black",
-                     "Male",
-                     0,
-                     0,
-                     40,
-                     "United-States",
-                     0
-                     ]])
-
-    df_temp = DataFrame(data=array, columns=[
-        "age",
-        "workclass",
-        "fnlgt",
-        "education",
-        "education-num",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "capital-gain",
-        "capital-loss",
-        "hours-per-week",
-        "native-country",
-        "other"
-    ])
-
-    cat_features = [
-        "workclass",
-        "education",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native-country",
-    ]
-
-    X, _, _, _ = train_model.process_data(
-                df_temp,
-                categorical_features=cat_features,
-                encoder=encoder, lb=lb, training=False)
-
-    pred = train_model.inference(model, X)
-    y = lb.inverse_transform(pred)[0]
-    assert y != "<=50K"

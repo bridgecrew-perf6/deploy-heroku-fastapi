@@ -105,10 +105,23 @@ def train_model(X_train, y_train):
     cv = KFold(n_splits=2, shuffle=True, random_state=1)
     model = GradientBoostingClassifier(n_estimators=10)
     model.fit(X_train, y_train)
-    scores = cross_val_score(model, X_train, y_train, scoring='accuracy',
+    acc = cross_val_score(model, X_train, y_train, scoring='accuracy',
                              cv=cv, n_jobs=-1)
 
-    print('Accuracy: %.3f (%.3f)' % (mean(scores), std(scores)))
+    recall = cross_val_score(model, X_train, y_train, scoring='recall',
+                             cv=cv, n_jobs=-1)
+
+    precision = cross_val_score(model, X_train, y_train, scoring='precision',
+                             cv=cv, n_jobs=-1)
+
+    fbeta = cross_val_score(model, X_train, y_train, scoring='f1',
+                             cv=cv, n_jobs=-1)
+
+    print('Accuracy: %.3f (%.3f)' % (mean(acc), std(acc)))
+    print('Recall: %.3f (%.3f)' % (mean(recall), std(recall)))    
+    print('Precision: %.3f (%.3f)' % (mean(precision), std(precision)))
+    print('Fbeta: %.3f (%.3f)' % (mean(fbeta), std(fbeta)))
+
     return model
 
 
@@ -116,8 +129,6 @@ def get_model(data: pd.DataFrame):
     """
     Execute model training
     """
-    train, test = train_test_split(data, test_size=0.20)
-
     cat_features = [
         "workclass",
         "education",
@@ -129,7 +140,7 @@ def get_model(data: pd.DataFrame):
         "native-country",
     ]
     X_train, y_train, encoder, lb = process_data(
-        train, categorical_features=cat_features, label="salary", training=True
+        data, categorical_features=cat_features, label="salary", training=True
     )
     trained_model = train_model(X_train, y_train)
 

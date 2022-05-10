@@ -52,6 +52,27 @@ class User(BaseModel):
     capitalLoss: int
     other: int
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "age": 25,
+                "workclass": 'Self-emp-not-inc',
+                "education": 'Bachelors',
+                "educationNum": 9,
+                "maritalStatus": 'Married-civ-spouse',
+                "occupation": 'Exec-managerial',
+                "relationship":  'Husband',
+                "race": 'White',
+                "sex": 'Male',
+                "hoursPerWeek": 45,
+                "nativeCountry": 'Cuba',
+                "fnlgt": 95015,
+                "capitalGain": 123,
+                "capitalLoss": 132,
+                "other": 0
+            }
+        }
+
 
 if "DYNO" in os.environ and os.path.isdir(".dvc"):
     os.system("dvc config core.no_scm true")

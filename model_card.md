@@ -16,12 +16,14 @@ Data is coming from https://archive.ics.uci.edu/ml/datasets/census+income ; trai
 
 ## Evaluation Data
 
-
 Data is coming from https://archive.ics.uci.edu/ml/datasets/census+income ; evaluation is done using 20% of this data.
 
 ## Metrics
 
-The model was evaluated using with an accuracy score of 0.829 (0.012).
+Accuracy: 0.829 (0.018)
+Recall: 0.354 (0.116)
+Precision: 0.889 (0.099)
+Fbeta: 0.486 (0.103)
 
 ## Ethical Considerations
 
@@ -29,4 +31,4 @@ Bias could be inherit in the dataset, as gender and race are considered. interpr
 
 ## Caveats and Recommendations
 
-None
+Deploy on Heroku was done using Heroku CLI instead of Github (which would be the preferred way) due to a problemn on Githubs side.
