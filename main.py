@@ -82,6 +82,13 @@ if "DYNO" in os.environ and os.path.isdir(".dvc"):
 
 app = FastAPI()
 
+@app.on_event("startup")
+async def startup_event(): 
+    global model, encoder, lb
+    model = pickle.load(open('models/model.pkl', 'rb'))
+    encoder = pickle.load(open("models/encode.pkl", 'rb'))
+    lb = pickle.load(open("models/lb.pkl", 'rb'))
+
 @app.get("/")
 async def get_items():
     return {"message": "Welcome message and test."}
@@ -89,10 +96,6 @@ async def get_items():
 
 @app.post("/")
 async def inference(user_data: User):
-    model = pickle.load(open('models/model.pkl', 'rb'))
-    encoder = pickle.load(open("models/encode.pkl", 'rb'))
-    lb = pickle.load(open("models/lb.pkl", 'rb'))
-
     array = np.array([[
                      user_data.age,
                      user_data.workclass,
@@ -142,7 +145,7 @@ async def inference(user_data: User):
     X, _, _, _ = train_model.process_data(
                 df_temp,
                 categorical_features=cat_features,
-                encoder=encoder, lb=lb, training=False)
+                encoder=encoder, lb= lb, training=False)
     pred = train_model.inference(model, X)
     y = lb.inverse_transform(pred)[0]
     return {"prediction": y}
